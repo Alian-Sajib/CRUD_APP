@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New</title>
+    {% load crispy_forms_tags %}
+    <!-- using for date picker -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    {{ form.media }}
+    <style>
+        .content-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 15px;
+            font-family: sans-serif;
+            min-width: 400px;
+            border-radius: 5px 5px 0 0;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content-table">
+        <center>
+            <form method="POST">
+                {{form|crispy}}
+                {% csrf_token %}
+                <br>
+                <button type="submit">Add Item</button>
+            </form>
+            <br>
+            <button><a href="{% url 'index' %}">Cancel</a></button>
+        </center>
+    </div>
+
+</body>
+
+</html>

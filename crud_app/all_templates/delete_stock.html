@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Delete Stock Data</title>
+</head>
+
+<body>
+    <h1>Delete Stock Data</h1>
+
+    <p>Are you sure you want to delete the stock data with ID {{ id }}?</p>
+    <a href="{% url 'delete_stock_data' id %}">Delete</a>
+    <a href="{% url 'index' %}">Cancel</a>
+
+</body>
+
+</html>

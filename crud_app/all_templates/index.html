@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        .content-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 15px;
+            font-family: sans-serif;
+            min-width: 400px;
+            border-radius: 5px 5px 0 0;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+        }
+
+        .content-table thead tr {
+            background-color: #6495ed;
+            color: white;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .content-table th,
+        .content-table tr,
+        .content-table td {
+            padding: 12px 15px;
+        }
+
+        .content-table tbody,
+        tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .content-table tbody tr:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+
+        .content-table tbody tr:last-of-type {
+            border-bottom: 3px solid #6495ed;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var table = document.querySelector(".content-table");
+            var cells = table.querySelectorAll("td[contenteditable]");
+
+            cells.forEach(function (cell) {
+                cell.addEventListener("blur", function () {
+                    var newValue = cell.textContent.trim();
+
+                    // Send an AJAX request to update the value in the data model
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("PUT", `http://127.0.0.1:8000/update/${cell.dataset.itemId}/`, true);
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            if (xhr.status === 200) {
+                                console.log("Value updated successfully");
+                            } else {
+                                console.error("Failed to update value:", xhr.status);
+                            }
+                        }
+                    };
+                    xhr.send(JSON.stringify({
+                        id: cell.dataset.itemId,
+                        field: cell.dataset.field,
+                        value: newValue
+                    }));
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container" style="padding-left: 100px;">
+        <h3>Stock Data </h3>
+        <hr>
+        <button class="btn btn-success"><a href="{% url 'Add_stock' %}">Add New</a></button>
+        <table class="content-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Trade Code</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Open</th>
+                    <th>Close</th>
+                    <th>Volume</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data_list %}
+                <tr>
+                    <!--... -->
+                    <td contenteditable="true" class="editable" data-field="date" data-item-id="{{ item.id }}">{{item.date }}</td>
+                    <td contenteditable="true" class="editable" data-field="trade_code" data-item-id="{{ item.id }}">{{item.trade_code }}</td>
+                    <td contenteditable="true" class="editable" data-field="high" data-item-id="{{ item.id }}">{{item.high }}</td>
+                    <td contenteditable="true" class="editable" data-field="low" data-item-id="{{ item.id }}">{{item.low }}</td>
+                    <td contenteditable="true" class="editable" data-field="open" data-item-id="{{ item.id }}">{{item.open }}</td>
+                    <td contenteditable="true" class="editable" data-field="close" data-item-id="{{ item.id }}">{{item.close }}</td>
+                    <td contenteditable="true" class="editable" data-field="volume" data-item-id="{{ item.id }}">{{item.volume }}</td>
+                    <td><a href="{% url 'delete_stock' item.id %}">Delete</a></td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            <span class="step-links">
+                {% if data_list.has_previous %}
+                <a href="?page=1">&laquo; First</a>
+                <a href="?page={{ data_list.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ data_list.number }} of {{ data_list.paginator.num_pages }}
+                </span>
+
+                {% if data_list.has_next %}
+                <a href="?page={{ data_list.next_page_number }}">&nbsp;Next</a>
+                <a href="?page={{ data_list.paginator.num_pages }}">&nbsp;Last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+        <br><br>
+    </div>
+
+</body>
+
+</html>
